@@ -8,7 +8,7 @@
   --tab-active: #2563eb;
   --font: "Plus Jakarta Sans", system-ui, sans-serif;
   --radius-btn: 6px;
-  --col: min(36rem, 100% - 2rem);
+  --col: min(52rem, calc(100% - 3rem));
 }
 
 *,
@@ -76,7 +76,7 @@ body {
 
 /* Header */
 .top {
-  padding: 1rem 1rem 0;
+  padding: 0.75rem 1.5rem 0;
 }
 
 .top-inner {
@@ -94,14 +94,14 @@ body {
 
 .brand-logo {
   display: block;
-  height: 40px;
+  height: 56px;
   width: auto;
   object-fit: contain;
   filter: brightness(0);
 }
 
 .top-gh {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--muted);
   text-decoration: none;
@@ -113,12 +113,12 @@ body {
   text-decoration: underline;
 }
 
-/* Main — vertical center in remaining viewport */
+/* Main — sits under header (no huge gap from vertical centering) */
 .main {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 1.25rem 1rem 2rem;
+  padding: 0.75rem 1.5rem 2.5rem;
   min-height: 0;
 }
 
@@ -127,21 +127,22 @@ body {
 }
 
 .headline {
-  font-size: clamp(1.65rem, 4.2vw + 0.6rem, 2.2rem);
+  font-size: clamp(1.75rem, 3.5vw + 0.75rem, 2.45rem);
   font-weight: 800;
   line-height: 1.1;
-  letter-spacing: -0.035em;
-  margin: 0 0 1rem;
+  letter-spacing: -0.028em;
+  margin: 0 auto 1.1rem;
+  max-width: 22em;
   text-wrap: balance;
 }
 
 .sub {
-  margin: 0 auto 1.5rem;
-  max-width: 34em;
-  font-size: 0.98rem;
+  margin: 0 auto 1.6rem;
+  max-width: 46em;
+  font-size: 1.02rem;
   font-weight: 500;
   color: var(--muted);
-  line-height: 1.55;
+  line-height: 1.6;
   text-align: center;
   text-wrap: balance;
 }
@@ -165,11 +166,11 @@ body {
 .cmd-tab {
   flex: 1;
   margin: 0;
-  padding: 0.7rem 0.75rem;
+  padding: 0.75rem 1rem;
   font-family: var(--font);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--muted);
   background: transparent;
   border: none;
@@ -193,15 +194,15 @@ body {
   color: var(--ink);
   box-shadow: inset 0 0 0 2px var(--tab-active);
   margin: -1px;
-  padding: calc(0.7rem + 1px) calc(0.75rem + 1px);
+  padding: calc(0.75rem + 1px) calc(1rem + 1px);
 }
 
 .cmd-body {
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
-  padding: 0.85rem 0.75rem 0.85rem 1rem;
-  min-height: 3.25rem;
+  gap: 0.65rem;
+  padding: 1rem 1rem 1rem 1.15rem;
+  min-height: 3.4rem;
 }
 
 .cmd-panel {
@@ -225,9 +226,9 @@ body {
 
 .cmd-line {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 1.5;
   word-break: break-all;
   color: var(--ink);
 }
@@ -299,9 +300,9 @@ body {
 
 /* Footer */
 .foot {
-  padding: 0 1rem 1.75rem;
+  padding: 0 1.5rem 1.75rem;
   text-align: center;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
@@ -323,10 +324,15 @@ body {
 
 @media (min-width: 480px) {
   .cmd-tab {
-    font-size: 0.75rem;
+    font-size: 0.82rem;
+    padding: 0.8rem 1.15rem;
+  }
+
+  .cmd-tab.is-active {
+    padding: calc(0.8rem + 1px) calc(1.15rem + 1px);
   }
 
   .cmd-line {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
   }
 }
