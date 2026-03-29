@@ -1,4 +1,4 @@
-/* GtmDB landing — Syne + DM Sans, charcoal + teal */
+/* GtmDB landing — Fraunces + Outfit, charcoal + teal */
 
 :root {
   --bg: #0c0e10;
@@ -10,8 +10,8 @@
   --accent: #2ee6c8;
   --accent-dim: rgba(46, 230, 200, 0.14);
   --accent-hover: #5fffe3;
-  --font-display: "Syne", system-ui, sans-serif;
-  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Outfit", system-ui, sans-serif;
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
@@ -249,23 +249,24 @@ body {
 }
 
 .eyebrow {
-  font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-transform: none;
   color: var(--accent);
-  margin: 0 0 1rem;
+  margin: 0 0 0.75rem;
 }
 
 .hero h1 {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(2.15rem, 5.5vw, 3.35rem);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  font-optical-sizing: auto;
+  font-size: clamp(1.85rem, 4.2vw + 0.5rem, 2.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
   margin: 0 0 1.25rem;
-  max-width: 18ch;
+  max-width: 22em;
 }
 
 .lead {
