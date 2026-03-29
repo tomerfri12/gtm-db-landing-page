@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="GtmDB — graph-native CRM and GTM data layer for agents. Neo4j, policy-scoped API keys, REST and Python SDK." />
+  <title>GtmDB — Graph-native GTM data for agents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/" aria-label="GtmDB home">
+        <img
+          src="https://raw.githubusercontent.com/tomerfri12/gtm-db/main/docs/assets/gtm-db-logo.png"
+          alt=""
+          width="140"
+          height="auto"
+          class="brand-logo"
+        />
+        <span class="brand-text">GtmDB</span>
+      </a>
+      <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" id="nav-toggle">
+        <span class="nav-toggle-bar"></span>
+        <span class="visually-hidden">Menu</span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#api">API</a>
+        <a class="nav-cta" href="https://github.com/tomerfri12/gtm-db" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="wrap hero-inner">
+        <p class="eyebrow">Graph-native · Neo4j · Agent-ready</p>
+        <h1>One system of record for GTM—and the agents that use it.</h1>
+        <p class="lead">
+          Typed CRUD, traversals, search, and explore over accounts, leads, contacts, deals, campaigns, and relationships—under declarative
+          <strong>Scope</strong> policies: tenant isolation, field masking, and audit-friendly activity logging.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md" target="_blank" rel="noopener noreferrer">
+            Teach your agent how to use GtmDB
+          </a>
+          <a class="btn btn-secondary" href="https://github.com/tomerfri12/gtm-db" target="_blank" rel="noopener noreferrer">
+            View on GitHub
+          </a>
+        </div>
+        <p class="hero-note">
+          Hosted API example:
+          <code>https://gtm-db-production.up.railway.app</code>
+          · <code>GET /health</code> (no auth)
+        </p>
+      </div>
+    </section>
+
+    <section class="steps" id="how" aria-labelledby="how-heading">
+      <div class="wrap">
+        <h2 id="how-heading" class="section-title">From zero to graph-backed GTM</h2>
+        <p class="section-sub">Same mental model as orchestration tools: define access, point agents at one API, ship.</p>
+        <ol class="step-grid">
+          <li class="step-card">
+            <span class="step-num">01</span>
+            <h3>Get a key</h3>
+            <p>Admin key from env or provision scoped agent keys via Postgres-backed <code>/v1/admin/keys</code>.</p>
+          </li>
+          <li class="step-card">
+            <span class="step-num">02</span>
+            <h3>Teach the agent</h3>
+            <p>Add the Cursor skill (SKILL.md): REST patterns, <code>actor_id</code>, reasoning on writes, and safe defaults.</p>
+          </li>
+          <li class="step-card">
+            <span class="step-num">03</span>
+            <h3>Query the graph</h3>
+            <p>CRUD entities, full-text search, entity explore, and policy-aware reads—without bolting on a second CRM API.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="code-strip" id="api" aria-labelledby="api-heading">
+      <div class="wrap code-strip-inner">
+        <div class="code-strip-copy">
+          <h2 id="api-heading" class="section-title">REST + async Python SDK</h2>
+          <p>Every <code>/v1/*</code> call uses <code>Authorization: Bearer …</code>. Use the hosted service or run <code>python -m gtmdb serve</code> yourself.</p>
+          <a class="text-link" href="https://github.com/tomerfri12/gtm-db/tree/main/docs" target="_blank" rel="noopener noreferrer">Browse docs in the repo →</a>
+        </div>
+        <pre class="code-block" tabindex="0"><code><span class="c"># Python SDK (from the skill)</span>
+<span class="k">from</span> gtmdb <span class="k">import</span> connect_gtmdb
+
+db, scope = <span class="k">await</span> connect_gtmdb(api_key=api_key)
+<span class="k">await</span> db.leads.create(
+    scope, actor_id=<span class="s">"my-agent"</span>,
+    company_name=<span class="s">"Acme"</span>, status=<span class="s">"new"</span>,
+)
+<span class="k">await</span> db.close()</code></pre>
+      </div>
+    </section>
+
+    <section class="features" id="features" aria-labelledby="features-heading">
+      <div class="wrap">
+        <h2 id="features-heading" class="section-title">Built for autonomous GTM</h2>
+        <ul class="feature-grid">
+          <li class="feature-card">
+            <h3>Commercial graph</h3>
+            <p>Nodes and relationships in Neo4j—360° views, explore subgraphs, and attribution-style paths on the same store sales and marketing share.</p>
+          </li>
+          <li class="feature-card">
+            <h3>Scope &amp; policies</h3>
+            <p>Tenant isolation, read/write rules, field-level masking, and redaction modes—different tokens for reps, internal agents, or partners.</p>
+          </li>
+          <li class="feature-card">
+            <h3>Audit trail</h3>
+            <p>Activity logging for API requests (with reasoning where provided) so you can trace who did what, including scoped self-serve log queries.</p>
+          </li>
+          <li class="feature-card">
+            <h3>Search &amp; explore</h3>
+            <p>Full-text search and graph exploration endpoints so agents can navigate the pipeline without ad-hoc SQL across silos.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="wrap cta-band-inner">
+        <h2>Ship agents that understand your pipeline</h2>
+        <p>Point them at the skill—structured workflows, not one-off prompts.</p>
+        <a class="btn btn-primary btn-lg" href="https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md" target="_blank" rel="noopener noreferrer">
+          Open SKILL.md on GitHub
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div class="footer-brand">
+        <strong>GtmDB</strong>
+        <span class="footer-tag">Graph-native GTM data layer</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/tomerfri12/gtm-db" target="_blank" rel="noopener noreferrer">Repository</a></li>
+        <li><a href="https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md" target="_blank" rel="noopener noreferrer">Agent skill (SKILL.md)</a></li>
+        <li><a href="https://raw.githubusercontent.com/tomerfri12/gtm-db/main/skills/gtmdb/SKILL.md" target="_blank" rel="noopener noreferrer">Raw skill (copy)</a></li>
+      </ul>
+      <p class="footer-copy">GtmDB library license: see the <a href="https://github.com/tomerfri12/gtm-db" target="_blank" rel="noopener noreferrer">gtm-db</a> repository.</p>
+    </div>
+  </footer>
+
+  <script src="main.js" defer></script>
+</body>
+</html>
