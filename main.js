@@ -3,7 +3,6 @@
   var panels = {
     rest: document.getElementById("panel-rest"),
     skill: document.getElementById("panel-skill"),
-    agent: document.getElementById("panel-agent"),
   };
   var copyBtn = document.getElementById("cmd-copy");
   var activeKey = "skill";

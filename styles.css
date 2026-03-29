@@ -1,4 +1,4 @@
-/* GtmDB landing — minimal cream + tabbed command strip */
+/* GtmDB landing — minimal cream, centered column */
 
 :root {
   --cream: #fefde1;
@@ -8,7 +8,7 @@
   --tab-active: #2563eb;
   --font: "Plus Jakarta Sans", system-ui, sans-serif;
   --radius-btn: 6px;
-  --max: 640px;
+  --col: min(36rem, 100% - 2rem);
 }
 
 *,
@@ -24,8 +24,8 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   font-family: var(--font);
   font-size: 1rem;
   line-height: 1.5;
@@ -65,14 +65,21 @@ body {
   outline-offset: 2px;
 }
 
+/* Shared column: header, hero, footer align */
+.top-inner,
+.main-inner,
+.foot {
+  width: var(--col);
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Header */
 .top {
-  padding: 1.25rem 1.5rem 0;
+  padding: 1rem 1rem 0;
 }
 
 .top-inner {
-  max-width: calc(var(--max) + 3rem);
-  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -81,23 +88,16 @@ body {
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   text-decoration: none;
   color: var(--ink);
 }
 
 .brand-logo {
   display: block;
-  height: 32px;
+  height: 40px;
   width: auto;
   object-fit: contain;
   filter: brightness(0);
-}
-
-.brand-text {
-  font-weight: 800;
-  font-size: 1.125rem;
-  letter-spacing: -0.03em;
 }
 
 .top-gh {
@@ -113,58 +113,61 @@ body {
   text-decoration: underline;
 }
 
-/* Main */
+/* Main — vertical center in remaining viewport */
 .main {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1.5rem 3rem;
+  padding: 1.25rem 1rem 2rem;
+  min-height: 0;
 }
 
 .main-inner {
-  width: 100%;
-  max-width: var(--max);
+  text-align: center;
 }
 
 .headline {
-  font-size: clamp(1.75rem, 5vw, 2.35rem);
+  font-size: clamp(1.65rem, 4.2vw + 0.6rem, 2.2rem);
   font-weight: 800;
-  line-height: 1.08;
+  line-height: 1.1;
   letter-spacing: -0.035em;
-  margin: 0 0 1.25rem;
+  margin: 0 0 1rem;
+  text-wrap: balance;
 }
 
 .sub {
-  margin: 0 0 1.75rem;
-  font-size: 1rem;
+  margin: 0 auto 1.5rem;
+  max-width: 34em;
+  font-size: 0.98rem;
   font-weight: 500;
   color: var(--muted);
   line-height: 1.55;
+  text-align: center;
+  text-wrap: balance;
 }
 
-/* Command box */
+/* Command box — left-aligned inside centered column */
 .cmd-box {
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--cream);
-  margin-bottom: 1.5rem;
+  margin: 0 auto 1.35rem;
   overflow: hidden;
+  text-align: left;
 }
 
 .cmd-tabs {
   display: flex;
   align-items: stretch;
   border-bottom: 1px solid var(--border);
-  gap: 0;
 }
 
 .cmd-tab {
   flex: 1;
   margin: 0;
-  padding: 0.65rem 0.5rem;
+  padding: 0.7rem 0.75rem;
   font-family: var(--font);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--muted);
@@ -190,7 +193,7 @@ body {
   color: var(--ink);
   box-shadow: inset 0 0 0 2px var(--tab-active);
   margin: -1px;
-  padding: calc(0.65rem + 1px) calc(0.5rem + 1px);
+  padding: calc(0.7rem + 1px) calc(0.75rem + 1px);
 }
 
 .cmd-body {
@@ -257,19 +260,17 @@ body {
   color: #15803d;
 }
 
-/* Buttons */
+/* Single CTA */
 .actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
+  justify-content: center;
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.7rem 1.25rem;
+  padding: 0.7rem 1.35rem;
   font-family: var(--font);
   font-size: 0.9375rem;
   font-weight: 600;
@@ -291,16 +292,6 @@ body {
   color: var(--cream);
 }
 
-.btn-outline {
-  background: transparent;
-  color: var(--ink);
-}
-
-.btn-outline:hover,
-.btn-outline:focus-visible {
-  background: rgba(0, 0, 0, 0.06);
-}
-
 .btn:focus-visible {
   outline: 2px solid var(--tab-active);
   outline-offset: 2px;
@@ -308,7 +299,7 @@ body {
 
 /* Footer */
 .foot {
-  padding: 0 1.5rem 2rem;
+  padding: 0 1rem 1.75rem;
   text-align: center;
   font-size: 0.8125rem;
   font-weight: 500;
@@ -333,7 +324,6 @@ body {
 @media (min-width: 480px) {
   .cmd-tab {
     font-size: 0.75rem;
-    padding: 0.7rem 0.75rem;
   }
 
   .cmd-line {

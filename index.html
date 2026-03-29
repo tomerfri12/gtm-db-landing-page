@@ -18,12 +18,11 @@
       <a class="brand" href="/" aria-label="GtmDB home">
         <img
           src="https://raw.githubusercontent.com/tomerfri12/gtm-db/main/docs/assets/gtm-db-logo.png"
-          alt=""
-          width="120"
+          alt="GtmDB"
+          width="132"
           height="auto"
           class="brand-logo"
         />
-        <span class="brand-text">GtmDB</span>
       </a>
       <a class="top-gh" href="https://github.com/tomerfri12/gtm-db" target="_blank" rel="noopener noreferrer">GitHub</a>
     </div>
@@ -34,16 +33,15 @@
       <h1 class="headline">Full-stack data layer built for the era of GTM autonomous operations.</h1>
 
       <p class="sub">
-        One API for your GTM graph.<br />
-        Scoped keys. Audit when agents act.<br />
-        Humans and automations stay aligned.
+        Give agents context from your GTM graph—only through permissioned access.<br />
+        Scoped keys and policies decide what each integration may read or write.<br />
+        Audit keeps autonomous runs traceable on the same graph.
       </p>
 
       <div class="cmd-box" id="install">
         <div class="cmd-tabs" role="tablist" aria-label="Quick start">
           <button type="button" class="cmd-tab" role="tab" id="tab-rest" aria-selected="false" aria-controls="panel-rest" tabindex="-1" data-panel="rest">REST</button>
           <button type="button" class="cmd-tab is-active" role="tab" id="tab-skill" aria-selected="true" aria-controls="panel-skill" tabindex="0" data-panel="skill">SKILL</button>
-          <button type="button" class="cmd-tab" role="tab" id="tab-agent" aria-selected="false" aria-controls="panel-agent" tabindex="-1" data-panel="agent">AGENT PROMPT</button>
         </div>
         <div class="cmd-body">
           <div id="panel-rest" class="cmd-panel" role="tabpanel" aria-labelledby="tab-rest" hidden>
@@ -53,10 +51,6 @@
           <div id="panel-skill" class="cmd-panel" role="tabpanel" aria-labelledby="tab-skill">
             <span class="cmd-prompt" aria-hidden="true">&gt;</span>
             <code class="cmd-line">https://raw.githubusercontent.com/tomerfri12/gtm-db/main/skills/gtmdb/SKILL.md</code>
-          </div>
-          <div id="panel-agent" class="cmd-panel" role="tabpanel" aria-labelledby="tab-agent" hidden>
-            <span class="cmd-prompt" aria-hidden="true">&gt;</span>
-            <code class="cmd-line">Follow skills/gtmdb/SKILL.md. On writes, always send actor_id (and reasoning when useful).</code>
           </div>
           <button type="button" class="cmd-copy" id="cmd-copy" aria-label="Copy to clipboard">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -69,7 +63,6 @@
 
       <div class="actions">
         <a class="btn btn-solid" href="https://github.com/tomerfri12/gtm-db" target="_blank" rel="noopener noreferrer">Get started</a>
-        <a class="btn btn-outline" href="#install">See how it works ↓</a>
       </div>
     </div>
   </main>
