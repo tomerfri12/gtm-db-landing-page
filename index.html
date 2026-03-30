@@ -45,19 +45,31 @@
         <div class="cmd-body">
           <div id="panel-prompt" class="cmd-panel cmd-panel--prompt" role="tabpanel" aria-labelledby="tab-prompt">
             <div class="cmd-scroll" tabindex="0" role="region" aria-label="GtmDB skill document">
-              <pre class="cmd-line cmd-line--block">Create a skill that connects to **GtmDB**—a small package (e.g. SKILL.md) that teaches your stack how to call our graph-native CRM/GTM API. You are not downloading an agent; you are wiring **credentials + endpoints + rules** so assistants or jobs can use the **REST API** or **Python SDK** safely.
+              <pre class="cmd-line cmd-line--block">## OpenClaw — add this skill in your workspace
 
-**What this is:** ship the block below as your skill so tools that load skills can read, write, search, and analyze CRM/GTM data with tenant isolation and audit trails. Everything after the YAML front matter is the official **gtmdb** skill body: OpenClaw metadata when you use it, full REST reference (CRUD, links, scores, search, explore, admin keys), Python SDK, graph model, critical rules, workflows, self-host env vars, errors, and permission presets. Hosted API: `https://gtm-db-production.up.railway.app`. The canonical raw SKILL URL (for updates) is at the end of this block.
+1. In your OpenClaw workspace, **create a skill file** (for example `skills/gtmdb/SKILL.md`).
+2. **Paste everything from the first `---` (YAML front matter) below through the end of this document** into that file.
+3. **Register the skill** with OpenClaw the way you usually do (point it at that path / reload skills).
+
+**This skill will be used to:** let the assistant **read and write your live GtmDB tenant** over HTTPS — pull lists of leads, contacts, deals, accounts, campaigns, and related objects; create and update records; attach leads to campaigns; score leads; run **search** and **subgraph explore** for a 360° view — always using the human-provided API key, **actor_id** on writes, and **reasoning** where the API requires it.
+
+### GtmDB — what it is (product overview)
+
+**GtmDB** is the **full-stack data layer** built for **GTM autonomous operations**: typed CRUD, search, and traversals over your **commercial graph** under one **scoped permission model** (tenant isolation, policy-based read/write, field rules). It is designed as **one system of record for the whole revenue motion** — the same store backs **marketing** (campaigns, leads, attribution, channels, content), **sales** (accounts, contacts, deals, pipeline), and **customer success** (shared account context), instead of siloed spreadsheets or a different partial API per tool. Agents and automations get **secure access** to the same entities humans use.
+
+**Hosted API (this skill targets):** `https://gtm-db-production.up.railway.app` — OpenAPI UI: `https://gtm-db-production.up.railway.app/docs` — product overview &amp; system-of-record framing: https://github.com/tomerfri12/gtm-db (see README “Overview — what is gtmDB?” and “Sales, marketing &amp; customer success”).
+
+Everything after the YAML block below is the official **gtmdb** skill body (REST + Python SDK reference, graph model, rules, workflows, server env vars for self-hosting, errors, presets). **Canonical raw copy for updates:** URL at the very end of this block.
 
 ---
 name: gtmdb
-description: GtmDB — the world's best graph-native GTM data layer. Neo4j-backed accounts, leads, contacts, deals, campaigns, email programs, scores, relationships. Async Python SDK + REST API. Every write needs actor_id. Tiered edge reasoning. Scores only via leads.add_score.
+description: GtmDB — full-stack GTM data layer. Accounts, leads, contacts, deals, campaigns, email programs, scores, channels, products, content, relationships. REST API + async Python SDK. Scoped keys, tenant isolation, audit trails. Every write needs actor_id; scores only via leads. Graph traversals and search.
 metadata: {"openclaw": {"requires": {"bins": ["python3"]}, "homepage": "https://github.com/tomerfri12/gtm-db"}}
 ---
 
 # GtmDB
 
-GtmDB is the **graph-native CRM/GTM persistence engine**. It stores accounts, leads, contacts, deals, campaigns, email programs, scores, and the relationships between them in **Neo4j** — with full tenant isolation, field-level permissions, and audit trails.
+GtmDB exposes **typed CRUD, search, and graph traversals** over accounts, leads, contacts, deals, campaigns, email programs, scores, channels, products, content, and the **relationships** between them — with **tenant isolation**, field-level permissions, and audit trails.
 
 Use this skill when the user needs to **read, write, search, or analyze CRM/GTM data** through the GtmDB Python SDK or REST API.
 
@@ -790,9 +802,9 @@ result = await db.email_campaigns.create_with_artifacts(scope,
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `GTMDB_NEO4J_URI` | Yes | Neo4j connection URI |
-| `GTMDB_NEO4J_USER` | Yes | Neo4j username |
-| `GTMDB_NEO4J_PASSWORD` | Yes | Neo4j password |
+| `GTMDB_NEO4J_URI` | Yes | Graph database URI (self-hosted server) |
+| `GTMDB_NEO4J_USER` | Yes | Graph database username |
+| `GTMDB_NEO4J_PASSWORD` | Yes | Graph database password |
 | `GTMDB_ADMIN_KEY` | For admin ops | Admin API key |
 | `GTMDB_DEFAULT_TENANT_ID` | No | UUID tenant (default provided) |
 | `GTMDB_KEY_STORE_URL` | For agent keys | Postgres DSN (`postgresql+asyncpg://...`) |
@@ -834,97 +846,99 @@ Canonical SKILL (updates land here first): https://raw.githubusercontent.com/tom
 
           <div id="panel-curl" class="cmd-panel cmd-panel--rest" role="tabpanel" aria-labelledby="tab-curl" hidden>
             <div class="cmd-scroll" tabindex="0" role="region" aria-label="curl examples for GtmDB">
-              <pre class="cmd-line cmd-line--block"># GtmDB — curl examples
-# Copy-paste calls against the hosted API (set env vars first).
+              <pre class="cmd-line cmd-line--block"># GtmDB — curl cookbook (hosted)
+# Replace YOUR_API_KEY everywhere. Query params use &amp; — paste as one line if your shell prefers.
 
-# Base URL (hosted)
-export GTMDB_BASE=https://gtm-db-production.up.railway.app
-export GTMDB_API_KEY=&lt;paste-your-agent-or-admin-key&gt;
+API="https://gtm-db-production.up.railway.app"
+KEY="YOUR_API_KEY"
 
-# --- Public (no Bearer token) ---
-curl -sS "$GTMDB_BASE/health"
-curl -sS "$GTMDB_BASE/v1/schema" | head -c 400; echo "…"
-# OpenAPI UI (browser): https://gtm-db-production.up.railway.app/docs
+# ---------- Public (no auth) ----------
+curl -sS "$API/health"
+curl -sS "$API/v1/schema"
+# Interactive docs: https://gtm-db-production.up.railway.app/docs
 
-# --- List &amp; filter (GET + query params = equality on domain fields) ---
-curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/leads?limit=10&amp;status=new"
+# ---------- List collections (GET — add any domain field as ?field=value for equality) ----------
 
-curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/accounts?domain=acme.com&amp;limit=5"
+# Leads (e.g. newest first page, filter by status)
+curl -sS -H "Authorization: Bearer $KEY" \
+  "$API/v1/leads?limit=25&amp;offset=0&amp;status=new"
 
-# --- Create (actor_id required on body) ---
-curl -sS -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "actor_id": "curl-demo",
-    "name": "Acme Corp",
-    "domain": "acme.com",
-    "industry": "SaaS"
-  }' \
-  "$GTMDB_BASE/v1/accounts"
+# Contacts
+curl -sS -H "Authorization: Bearer $KEY" \
+  "$API/v1/contacts?limit=25&amp;offset=0"
 
-curl -sS -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "actor_id": "curl-demo",
-    "first_name": "Jane",
-    "last_name": "Doe",
-    "email": "jane@acme.com",
-    "company_name": "Acme",
-    "title": "VP Engineering",
-    "source": "landing_page"
-  }' \
-  "$GTMDB_BASE/v1/leads"
+# Deals (e.g. pipeline slice)
+curl -sS -H "Authorization: Bearer $KEY" \
+  "$API/v1/deals?limit=25&amp;stage=proposal"
 
-# --- Read one (replace LEAD_ID) ---
-curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/leads/LEAD_ID"
+# Accounts
+curl -sS -H "Authorization: Bearer $KEY" \
+  "$API/v1/accounts?limit=25&amp;domain=acme.com"
 
-# --- List deals in a stage ---
-curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/deals?stage=proposal&amp;limit=20"
+# Campaigns
+curl -sS -H "Authorization: Bearer $KEY" \
+  "$API/v1/campaigns?limit=25&amp;status=active"
 
-# --- Patch (actor_id + fields) ---
-curl -sS -X PATCH -H "Authorization: Bearer $GTMDB_API_KEY" \
-  -H "Content-Type: application/json" \
+# Email campaigns + emails + channels + products + content
+curl -sS -H "Authorization: Bearer $KEY" "$API/v1/email-campaigns?limit=10"
+curl -sS -H "Authorization: Bearer $KEY" "$API/v1/emails?limit=10"
+curl -sS -H "Authorization: Bearer $KEY" "$API/v1/channels?limit=10"
+curl -sS -H "Authorization: Bearer $KEY" "$API/v1/products?limit=10"
+curl -sS -H "Authorization: Bearer $KEY" "$API/v1/content?limit=10"
+
+# ---------- Fetch one record by id ----------
+curl -sS -H "Authorization: Bearer $KEY" "$API/v1/leads/LEAD_UUID"
+curl -sS -H "Authorization: Bearer $KEY" "$API/v1/contacts/CONTACT_UUID"
+curl -sS -H "Authorization: Bearer $KEY" "$API/v1/deals/DEAL_UUID"
+curl -sS -H "Authorization: Bearer $KEY" "$API/v1/accounts/ACCOUNT_UUID"
+
+# ---------- Create (actor_id required) — full URLs ----------
+curl -sS -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+  -d '{"actor_id":"curl-demo","name":"Acme Corp","domain":"acme.com","industry":"SaaS"}' \
+  "https://gtm-db-production.up.railway.app/v1/accounts"
+
+curl -sS -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+  -d '{"actor_id":"curl-demo","first_name":"Jane","last_name":"Doe","email":"jane@acme.com","company_name":"Acme","title":"VP Eng","source":"web"}' \
+  "https://gtm-db-production.up.railway.app/v1/leads"
+
+curl -sS -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+  -d '{"actor_id":"curl-demo","first_name":"Sam","last_name":"Lee","email":"sam@acme.com","title":"CTO","company_name":"Acme"}' \
+  "https://gtm-db-production.up.railway.app/v1/contacts"
+
+curl -sS -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+  -d '{"actor_id":"curl-demo","name":"Acme renewal","amount":120000,"stage":"discovery","probability":0.4}' \
+  "https://gtm-db-production.up.railway.app/v1/deals"
+
+# ---------- Patch + delete ----------
+curl -sS -X PATCH -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
   -d '{"actor_id":"curl-demo","status":"qualified","reasoning":"Met ICP"}' \
-  "$GTMDB_BASE/v1/leads/LEAD_ID"
+  "https://gtm-db-production.up.railway.app/v1/leads/LEAD_UUID"
 
-# --- Graph: link lead → campaign (reasoning required) ---
-curl -sS -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"campaign_id":"CAMPAIGN_UUID","reasoning":"Registered for Q1 webinar"}' \
-  "$GTMDB_BASE/v1/leads/LEAD_ID/link-campaign"
+curl -sS -X DELETE -H "Authorization: Bearer $KEY" \
+  "https://gtm-db-production.up.railway.app/v1/leads/LEAD_UUID"
 
-# --- Search across entities ---
-curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/search?q=acme&amp;limit=15"
+# ---------- Graph helpers (reasoning required on links) ----------
+curl -sS -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+  -d '{"campaign_id":"CAMPAIGN_UUID","reasoning":"Webinar signup"}' \
+  "https://gtm-db-production.up.railway.app/v1/leads/LEAD_UUID/link-campaign"
 
-# --- Subgraph around one node (start compact, then full if needed) ---
-curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/entities/ENTITY_ID/explore?depth=2&amp;mode=compact"
+curl -sS -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+  -d '{"account_id":"ACCOUNT_UUID","reasoning":"Stakeholder from QBR"}' \
+  "https://gtm-db-production.up.railway.app/v1/contacts/CONTACT_UUID/assign-account"
 
-# --- Score a lead (never POST /v1/scores — use this path) ---
-curl -sS -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "actor_id": "curl-demo",
-    "has_score_reasoning": "Strong fit from discovery",
-    "total": 78,
-    "score_type": "bant",
-    "budget": 8,
-    "authority": 9,
-    "need": 8,
-    "timeline": 7
-  }' \
-  "$GTMDB_BASE/v1/leads/LEAD_ID/scores"
+# ---------- Search + subgraph ----------
+curl -sS -H "Authorization: Bearer $KEY" \
+  "https://gtm-db-production.up.railway.app/v1/search?q=acme&amp;limit=20"
 
-# --- One-liner: public health (no env vars, no auth) ---
-curl -sS "https://gtm-db-production.up.railway.app/health"
+curl -sS -H "Authorization: Bearer $KEY" \
+  "https://gtm-db-production.up.railway.app/v1/entities/ANY_NODE_UUID/explore?depth=2&amp;mode=compact"
 
-More shapes: GtmDB skill tab on this page ·
-https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md</pre>
+# ---------- Lead score (never POST /v1/scores) ----------
+curl -sS -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+  -d '{"actor_id":"curl-demo","has_score_reasoning":"BANT fit","total":80,"score_type":"bant","budget":8,"authority":9,"need":8,"timeline":7}' \
+  "https://gtm-db-production.up.railway.app/v1/leads/LEAD_UUID/scores"
+
+Full reference: skill tab on this page · https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md</pre>
             </div>
           </div>
           
