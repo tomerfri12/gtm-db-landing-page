@@ -16,9 +16,9 @@
 
   <header class="top">
     <div class="top-inner">
-      <a class="brand" href="/" aria-label="GtmDB home">
+      <a class="brand" href="index.html" aria-label="GtmDB home">
         <img
-          src="https://raw.githubusercontent.com/tomerfri12/gtm-db/main/docs/assets/gtm-db-logo.png"
+          src="docs/assets/gtm-db-logo.png"
           alt="GtmDB"
           width="200"
           height="auto"
@@ -935,7 +935,7 @@ curl -sS -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/j
   -d '{"actor_id":"curl-demo","has_score_reasoning":"BANT fit","total":80,"score_type":"bant","budget":8,"authority":9,"need":8,"timeline":7}' \
   "https://gtm-db-production.up.railway.app/v1/leads/LEAD_UUID/scores"
 
-Full reference: OpenClaw tab on this page · https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md</pre>
+Full reference: OpenClaw tab on this page · static API reference: docs/api-reference.html · https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md</pre>
             </div>
           </div>
           
@@ -949,12 +949,14 @@ Full reference: OpenClaw tab on this page · https://github.com/tomerfri12/gtm-d
       </div>
 
       <div class="actions">
-        <a class="btn btn-solid" href="/docs/api-reference.html">API Reference</a>
+        <a class="btn btn-solid" href="docs/api-reference.html">API Reference</a>
       </div>
     </div>
   </main>
 
   <footer class="foot">
+    <a href="docs/api-reference.html">API Reference</a>
+    <span class="foot-dot" aria-hidden="true">·</span>
     <a href="https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md" target="_blank" rel="noopener noreferrer">SKILL.md</a>
     <span class="foot-dot" aria-hidden="true">·</span>
     <a href="https://github.com/tomerfri12/gtm-db" target="_blank" rel="noopener noreferrer">Repository</a>

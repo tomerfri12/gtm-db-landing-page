@@ -113,6 +113,17 @@
       text-transform: uppercase;
       color: var(--muted);
     }
+    .sidebar-back {
+      margin: -0.25rem 1rem 0.85rem;
+      font-size: 12px;
+    }
+    .sidebar-back a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .sidebar-back a:hover {
+      text-decoration: underline;
+    }
     aside nav details.nav-section {
       margin-top: 0.85rem;
       border-bottom: 1px solid var(--border);
@@ -301,10 +312,11 @@
       <div id="sidebar-body" class="sidebar-body">
       <div class="sidebar-brand">
         <a href="#overview" title="gtmDB — API reference">
-          <img class="sidebar-logo" src="https://raw.githubusercontent.com/tomerfri12/gtm-db/main/docs/assets/gtm-db-logo.png" alt="gtmDB" />
+          <img class="sidebar-logo" src="assets/gtm-db-logo.png" alt="gtmDB" />
         </a>
       </div>
       <h1>API reference</h1>
+      <p class="sidebar-back"><a href="../index.html">← GtmDB landing</a></p>
       <nav aria-label="Page sections">
         <details class="nav-section" open>
           <summary class="nav-section-summary">Introduction</summary>
@@ -1473,8 +1485,9 @@ meta = await seed_sample_graph(db, scope, id_suffix="1")
 print(meta["ids"])</code></pre>
 
       <footer>
-        Static reference for the <code>gtmdb</code> Python package and REST API. Open this file in a browser.
-        Implementation details may change — refer to source under <code>src/gtmdb/</code>.
+        <p><a href="../index.html">← GtmDB landing</a></p>
+        <p>Static reference for the <code>gtmdb</code> Python package and REST API. Open <a href="api-reference.html">this file</a> or <a href="../index.html">the landing page</a> in a browser (works from disk or when hosted).</p>
+        <p>Implementation details may change — refer to source under <code>src/gtmdb/</code>.</p>
       </footer>
     </main>
   </div>
