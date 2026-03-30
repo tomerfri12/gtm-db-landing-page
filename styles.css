@@ -241,6 +241,7 @@ body {
 }
 
 .cmd-scroll {
+  min-height: 10rem;
   max-height: min(42vh, 19rem);
   overflow-y: auto;
   overflow-x: auto;
