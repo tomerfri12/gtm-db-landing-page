@@ -2,10 +2,10 @@
   var tabs = document.querySelectorAll(".cmd-tab");
   var panels = {
     rest: document.getElementById("panel-rest"),
-    skill: document.getElementById("panel-skill"),
+    prompt: document.getElementById("panel-prompt"),
   };
   var copyBtn = document.getElementById("cmd-copy");
-  var activeKey = "skill";
+  var activeKey = "prompt";
 
   function textFor(key) {
     var el = panels[key];
