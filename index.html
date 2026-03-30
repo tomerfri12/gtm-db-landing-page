@@ -39,12 +39,12 @@
 
       <div class="cmd-box" id="install">
         <div class="cmd-tabs" role="tablist" aria-label="Quick start">
-          <button type="button" class="cmd-tab is-active" role="tab" id="tab-prompt" aria-selected="true" aria-controls="panel-prompt" tabindex="0" data-panel="prompt">Create a skill that connects to GtmDB</button>
+          <button type="button" class="cmd-tab is-active" role="tab" id="tab-prompt" aria-selected="true" aria-controls="panel-prompt" tabindex="0" data-panel="prompt">OpenClaw</button>
           <button type="button" class="cmd-tab" role="tab" id="tab-curl" aria-selected="false" aria-controls="panel-curl" tabindex="-1" data-panel="curl">curl</button>
         </div>
         <div class="cmd-body">
           <div id="panel-prompt" class="cmd-panel cmd-panel--prompt" role="tabpanel" aria-labelledby="tab-prompt">
-            <div class="cmd-scroll" tabindex="0" role="region" aria-label="GtmDB skill document">
+            <div class="cmd-scroll" tabindex="0" role="region" aria-label="OpenClaw skill for GtmDB">
               <pre class="cmd-line cmd-line--block">## OpenClaw — add this skill in your workspace
 
 1. In your OpenClaw workspace, **create a skill file** (for example `skills/gtmdb/SKILL.md`).
@@ -938,7 +938,7 @@ curl -sS -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/j
   -d '{"actor_id":"curl-demo","has_score_reasoning":"BANT fit","total":80,"score_type":"bant","budget":8,"authority":9,"need":8,"timeline":7}' \
   "https://gtm-db-production.up.railway.app/v1/leads/LEAD_UUID/scores"
 
-Full reference: skill tab on this page · https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md</pre>
+Full reference: OpenClaw tab on this page · https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md</pre>
             </div>
           </div>
           
