@@ -32,6 +32,9 @@
         p.setAttribute("hidden", "");
       }
     });
+    if (copyBtn) {
+      copyBtn.hidden = key === "rest";
+    }
   }
 
   tabs.forEach(function (tab) {
@@ -40,6 +43,8 @@
       if (key) setActive(key);
     });
   });
+
+  setActive(activeKey);
 
   if (copyBtn) {
     copyBtn.addEventListener("click", function () {

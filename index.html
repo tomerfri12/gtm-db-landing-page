@@ -34,7 +34,7 @@
       <h1 class="headline">The data layer built for the era of GTM autonomous operations.</h1>
 
       <p class="sub">
-        No context, no execution. gtmDB gives agents a 360° view of your data, with built-in permissions — so they can run your GTM end-to-end.
+        No context, no execution. gtmDB gives agents a 360° view of your data, with built-in permissions per agent, so they can run your GTM end-to-end.
       </p>
 
       <div class="cmd-box" id="install">
@@ -43,14 +43,74 @@
           <button type="button" class="cmd-tab is-active" role="tab" id="tab-prompt" aria-selected="true" aria-controls="panel-prompt" tabindex="0" data-panel="prompt">Teach your OpenClaw agent</button>
         </div>
         <div class="cmd-body">
-          <div id="panel-rest" class="cmd-panel" role="tabpanel" aria-labelledby="tab-rest" hidden>
-            <span class="cmd-prompt" aria-hidden="true">&gt;</span>
-            <code class="cmd-line">curl -s -H &quot;Authorization: Bearer $GTMDB_API_KEY&quot; &quot;$GTMDB_BASE/v1/health&quot;</code>
+          <div id="panel-rest" class="cmd-panel cmd-panel--rest" role="tabpanel" aria-labelledby="tab-rest" hidden>
+            <div class="cmd-scroll" tabindex="0" role="region" aria-label="REST API quick reference">
+              <pre class="cmd-line cmd-line--block">GtmDB REST — hosted base URL
+https://gtm-db-production.up.railway.app
+
+Every /v1/* request needs a Bearer token (agent or admin API key):
+  Authorization: Bearer $GTMDB_API_KEY
+
+Optional shell helpers:
+  export GTMDB_BASE=https://gtm-db-production.up.railway.app
+  export GTMDB_API_KEY=&lt;your-key&gt;
+
+— Public (no auth) —
+curl -s "$GTMDB_BASE/health"
+curl -s "$GTMDB_BASE/v1/schema"          # node types, fields, relationship catalog
+OpenAPI UI: $GTMDB_BASE/docs
+
+— Typical CRUD (replace {entity}: accounts, leads, contacts, deals, campaigns, email-campaigns, emails, channels, products, content) —
+curl -s -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/{entity}?limit=50&amp;offset=0"
+
+curl -s -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/{entity}/{id}"
+
+curl -s -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"actor_id":"my-agent","name":"Acme Corp","domain":"acme.com"}' \
+  "$GTMDB_BASE/v1/accounts"
+
+curl -s -X PATCH -H "Authorization: Bearer $GTMDB_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"actor_id":"my-agent","stage":"proposal"}' \
+  "$GTMDB_BASE/v1/deals/{id}"
+
+curl -s -X DELETE -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/leads/{id}"
+
+actor_id is required on creates/updates; list endpoints accept domain fields as query params (equality).
+
+— Graph links (reasoning required on the body) —
+curl -s -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"campaign_id":"…","reasoning":"Webinar registration"}' \
+  "$GTMDB_BASE/v1/leads/{lead_id}/link-campaign"
+
+— Search &amp; explore —
+curl -s -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/search?q=acme&amp;limit=25"
+
+curl -s -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/entities/{entity_id}/explore?depth=2&amp;mode=compact"
+
+— Lead scores (only via leads; never POST /v1/scores) —
+curl -s -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"actor_id":"scoring-agent","has_score_reasoning":"BANT fit","total":72,"score_type":"bant"}' \
+  "$GTMDB_BASE/v1/leads/{lead_id}/scores"
+
+Full reference: OpenClaw agent tab on this page, or
+https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md</pre>
+            </div>
           </div>
           <div id="panel-prompt" class="cmd-panel cmd-panel--prompt" role="tabpanel" aria-labelledby="tab-prompt">
             <div class="cmd-scroll" tabindex="0" role="region" aria-label="Agent system prompt">
               <pre class="cmd-line cmd-line--block">
-                ---
+You are **gtmAgent**: the GtmDB-facing agent (e.g. OpenClaw with this skill loaded). Read, write, search, and analyze CRM/GTM data through the GtmDB Python SDK or REST API only as specified here. Everything below merges the landing prompt with the official **gtmdb** SKILL: OpenClaw YAML front matter, full REST reference (CRUD, links, scores, search, explore, admin keys), Python SDK (entities, relationships, traversals), graph model, critical rules, common workflows, server-side env vars when self-hosting, HTTP errors, and permission presets. Hosted API: `https://gtm-db-production.up.railway.app`. The canonical raw SKILL URL (for updates) is at the end of this block.
+
+---
 name: gtmdb
 description: GtmDB — the world's best graph-native GTM data layer. Neo4j-backed accounts, leads, contacts, deals, campaigns, email programs, scores, relationships. Async Python SDK + REST API. Every write needs actor_id. Tiered edge reasoning. Scores only via leads.add_score.
 metadata: {"openclaw": {"requires": {"bins": ["python3"]}, "homepage": "https://github.com/tomerfri12/gtm-db"}}
@@ -83,7 +143,7 @@ There are two key types:
 | Type | Source | Permissions | Can manage keys? |
 |------|--------|-------------|-----------------|
 | **Admin** | `GTMDB_ADMIN_KEY` env var | Full access to everything | Yes |
-| **Agent** | Provisioned via admin (`gtmdb_<key_id>_<secret>`) | Policy-scoped per key | No |
+| **Agent** | Provisioned via admin (keys like `gtmdb_<id>_<secret>`) | Policy-scoped per key | No |
 
 Use whichever you have. Both work the same way for data operations.
 
@@ -179,7 +239,7 @@ Authorization: Bearer <key>
 #### List (with filtering)
 
 ```
-GET /v1/{entity}?limit=50&offset=0&status=active&channel=email
+GET /v1/{entity}?limit=50&amp;offset=0&amp;status=active&amp;channel=email
 Authorization: Bearer <key>
 ```
 
@@ -320,7 +380,7 @@ Response: `{"campaign": {...}, "email_ids": [...], "linked_lead_count": 2}`
 ### Search
 
 ```
-GET /v1/search?q=acme&limit=25
+GET /v1/search?q=acme&amp;limit=25
 Authorization: Bearer <key>
 ```
 
@@ -827,6 +887,9 @@ In the Python SDK, these map to `ValueError` (400), `PermissionError` (403), and
 
 Combine with commas: `["write_all", "no_raw_content"]`
 
+---
+Canonical SKILL (updates land here first): https://raw.githubusercontent.com/tomerfri12/gtm-db/main/skills/gtmdb/SKILL.md
+              </pre>
             </div>
           </div>
           <button type="button" class="cmd-copy" id="cmd-copy" aria-label="Copy to clipboard">
@@ -839,7 +902,7 @@ Combine with commas: `["write_all", "no_raw_content"]`
       </div>
 
       <div class="actions">
-        <a class="btn btn-solid" href="https://github.com/tomerfri12/gtm-db" target="_blank" rel="noopener noreferrer">Get started</a>
+        <a class="btn btn-solid" href="https://github.com/tomerfri12/gtm-db" target="_blank" rel="noopener noreferrer">GitHub repo</a>
       </div>
     </div>
   </main>

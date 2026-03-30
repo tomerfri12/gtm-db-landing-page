@@ -233,7 +233,8 @@ body {
   display: none !important;
 }
 
-.cmd-panel--prompt {
+.cmd-panel--prompt,
+.cmd-panel--rest {
   flex: 1;
   min-width: 0;
   display: block;
