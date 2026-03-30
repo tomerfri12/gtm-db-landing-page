@@ -1,7 +1,7 @@
 (function () {
   var tabs = document.querySelectorAll(".cmd-tab");
   var panels = {
-    rest: document.getElementById("panel-rest"),
+    curl: document.getElementById("panel-curl"),
     prompt: document.getElementById("panel-prompt"),
   };
   var copyBtn = document.getElementById("cmd-copy");
@@ -33,7 +33,7 @@
       }
     });
     if (copyBtn) {
-      copyBtn.hidden = key === "rest";
+      copyBtn.hidden = key === "curl";
     }
   }
 

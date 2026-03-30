@@ -39,76 +39,103 @@
 
       <div class="cmd-box" id="install">
         <div class="cmd-tabs" role="tablist" aria-label="Quick start">
-          <button type="button" class="cmd-tab" role="tab" id="tab-rest" aria-selected="false" aria-controls="panel-rest" tabindex="-1" data-panel="rest">REST</button>
-          <button type="button" class="cmd-tab is-active" role="tab" id="tab-prompt" aria-selected="true" aria-controls="panel-prompt" tabindex="0" data-panel="prompt">Teach your OpenClaw agent</button>
+          <button type="button" class="cmd-tab" role="tab" id="tab-curl" aria-selected="false" aria-controls="panel-curl" tabindex="-1" data-panel="curl">curl</button>
+          <button type="button" class="cmd-tab is-active" role="tab" id="tab-prompt" aria-selected="true" aria-controls="panel-prompt" tabindex="0" data-panel="prompt">Create a skill that connects to GtmDB</button>
         </div>
         <div class="cmd-body">
-          <div id="panel-rest" class="cmd-panel cmd-panel--rest" role="tabpanel" aria-labelledby="tab-rest" hidden>
-            <div class="cmd-scroll" tabindex="0" role="region" aria-label="REST API quick reference">
-              <pre class="cmd-line cmd-line--block">GtmDB REST — hosted base URL
-https://gtm-db-production.up.railway.app
+          <div id="panel-curl" class="cmd-panel cmd-panel--rest" role="tabpanel" aria-labelledby="tab-curl" hidden>
+            <div class="cmd-scroll" tabindex="0" role="region" aria-label="curl examples for GtmDB">
+              <pre class="cmd-line cmd-line--block"># GtmDB — curl examples
+# Base URL (hosted)
+export GTMDB_BASE=https://gtm-db-production.up.railway.app
+export GTMDB_API_KEY=&lt;paste-your-agent-or-admin-key&gt;
 
-Every /v1/* request needs a Bearer token (agent or admin API key):
-  Authorization: Bearer $GTMDB_API_KEY
+# --- Public (no Bearer token) ---
+curl -sS "$GTMDB_BASE/health"
+curl -sS "$GTMDB_BASE/v1/schema" | head -c 400; echo "…"
+# OpenAPI UI (browser): https://gtm-db-production.up.railway.app/docs
 
-Optional shell helpers:
-  export GTMDB_BASE=https://gtm-db-production.up.railway.app
-  export GTMDB_API_KEY=&lt;your-key&gt;
+# --- List &amp; filter (GET + query params = equality on domain fields) ---
+curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/leads?limit=10&amp;status=new"
 
-— Public (no auth) —
-curl -s "$GTMDB_BASE/health"
-curl -s "$GTMDB_BASE/v1/schema"          # node types, fields, relationship catalog
-OpenAPI UI: $GTMDB_BASE/docs
+curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/accounts?domain=acme.com&amp;limit=5"
 
-— Typical CRUD (replace {entity}: accounts, leads, contacts, deals, campaigns, email-campaigns, emails, channels, products, content) —
-curl -s -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/{entity}?limit=50&amp;offset=0"
-
-curl -s -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/{entity}/{id}"
-
-curl -s -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
+# --- Create (actor_id required on body) ---
+curl -sS -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"actor_id":"my-agent","name":"Acme Corp","domain":"acme.com"}' \
+  -d '{
+    "actor_id": "curl-demo",
+    "name": "Acme Corp",
+    "domain": "acme.com",
+    "industry": "SaaS"
+  }' \
   "$GTMDB_BASE/v1/accounts"
 
-curl -s -X PATCH -H "Authorization: Bearer $GTMDB_API_KEY" \
+curl -sS -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"actor_id":"my-agent","stage":"proposal"}' \
-  "$GTMDB_BASE/v1/deals/{id}"
+  -d '{
+    "actor_id": "curl-demo",
+    "first_name": "Jane",
+    "last_name": "Doe",
+    "email": "jane@acme.com",
+    "company_name": "Acme",
+    "title": "VP Engineering",
+    "source": "landing_page"
+  }' \
+  "$GTMDB_BASE/v1/leads"
 
-curl -s -X DELETE -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/leads/{id}"
+# --- Read one (replace LEAD_ID) ---
+curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/leads/LEAD_ID"
 
-actor_id is required on creates/updates; list endpoints accept domain fields as query params (equality).
-
-— Graph links (reasoning required on the body) —
-curl -s -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
+# --- Patch (actor_id + fields) ---
+curl -sS -X PATCH -H "Authorization: Bearer $GTMDB_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"campaign_id":"…","reasoning":"Webinar registration"}' \
-  "$GTMDB_BASE/v1/leads/{lead_id}/link-campaign"
+  -d '{"actor_id":"curl-demo","status":"qualified","reasoning":"Met ICP"}' \
+  "$GTMDB_BASE/v1/leads/LEAD_ID"
 
-— Search &amp; explore —
-curl -s -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/search?q=acme&amp;limit=25"
-
-curl -s -H "Authorization: Bearer $GTMDB_API_KEY" \
-  "$GTMDB_BASE/v1/entities/{entity_id}/explore?depth=2&amp;mode=compact"
-
-— Lead scores (only via leads; never POST /v1/scores) —
-curl -s -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
+# --- Graph: link lead → campaign (reasoning required) ---
+curl -sS -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"actor_id":"scoring-agent","has_score_reasoning":"BANT fit","total":72,"score_type":"bant"}' \
-  "$GTMDB_BASE/v1/leads/{lead_id}/scores"
+  -d '{"campaign_id":"CAMPAIGN_UUID","reasoning":"Registered for Q1 webinar"}' \
+  "$GTMDB_BASE/v1/leads/LEAD_ID/link-campaign"
 
-Full reference: OpenClaw agent tab on this page, or
+# --- Search across entities ---
+curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/search?q=acme&amp;limit=15"
+
+# --- Subgraph around one node (start compact, then full if needed) ---
+curl -sS -H "Authorization: Bearer $GTMDB_API_KEY" \
+  "$GTMDB_BASE/v1/entities/ENTITY_ID/explore?depth=2&amp;mode=compact"
+
+# --- Score a lead (never POST /v1/scores — use this path) ---
+curl -sS -X POST -H "Authorization: Bearer $GTMDB_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "actor_id": "curl-demo",
+    "has_score_reasoning": "Strong fit from discovery",
+    "total": 78,
+    "score_type": "bant",
+    "budget": 8,
+    "authority": 9,
+    "need": 8,
+    "timeline": 7
+  }' \
+  "$GTMDB_BASE/v1/leads/LEAD_ID/scores"
+
+# --- One-liner: public health (no env vars, no auth) ---
+curl -sS "https://gtm-db-production.up.railway.app/health"
+
+More shapes: GtmDB skill tab on this page ·
 https://github.com/tomerfri12/gtm-db/blob/main/skills/gtmdb/SKILL.md</pre>
             </div>
           </div>
           <div id="panel-prompt" class="cmd-panel cmd-panel--prompt" role="tabpanel" aria-labelledby="tab-prompt">
-            <div class="cmd-scroll" tabindex="0" role="region" aria-label="Agent system prompt">
+            <div class="cmd-scroll" tabindex="0" role="region" aria-label="GtmDB skill document">
               <pre class="cmd-line cmd-line--block">
-You are **gtmAgent**: the GtmDB-facing agent (e.g. OpenClaw with this skill loaded). Read, write, search, and analyze CRM/GTM data through the GtmDB Python SDK or REST API only as specified here. Everything below merges the landing prompt with the official **gtmdb** SKILL: OpenClaw YAML front matter, full REST reference (CRUD, links, scores, search, explore, admin keys), Python SDK (entities, relationships, traversals), graph model, critical rules, common workflows, server-side env vars when self-hosting, HTTP errors, and permission presets. Hosted API: `https://gtm-db-production.up.railway.app`. The canonical raw SKILL URL (for updates) is at the end of this block.
+**What this is:** a **skill** that connects your assistant or automation stack to **GtmDB**—not a pre-built agent persona. Ship it as SKILL.md (or your runtime’s equivalent) so tools that load skills can read, write, search, and analyze CRM/GTM data via the **REST API** or **Python SDK**, with the rules below. Everything after this paragraph is the official **gtmdb** skill body: optional OpenClaw YAML front matter, full REST reference (CRUD, links, scores, search, explore, admin keys), Python SDK (entities, relationships, traversals), graph model, critical rules, workflows, server-side env vars when self-hosting, HTTP errors, and permission presets. Hosted API: `https://gtm-db-production.up.railway.app`. The canonical raw SKILL URL (for updates) is at the end of this block.
 
 ---
 name: gtmdb
